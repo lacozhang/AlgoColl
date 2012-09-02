@@ -3,6 +3,7 @@
 #include <bitset>
 #include <string>
 #include <cstring>
+#include <map>
 
 using namespace std;
 
@@ -15,22 +16,34 @@ struct Finger{
 		}
 };
 struct All{
+		All(){
+				cnt = 0;
+		}
 		Finger total[2500];
 		int cnt;
-		Finger *by_cnt[1101];
 		void reset(){
 				cnt = 0;
 				for(int i=0; i<2500; ++i){
 						(total[i]).next = NULL;
 				}
-				for(int i=0; i<1101; ++i){
-						by_cnt[i] = NULL;
-				}
+		}
+		Finger* get(){
+				++cnt;
+				return &total[cnt-1];
 		}
 };
 
 All g_all;
 char article[5000000];
+
+struct Lst{
+		Finger* next;
+		Lst(){
+				next = NULL;
+		}
+};
+
+map<int, Lst>  g_cnt;
 
 void add(const char* str){
 
@@ -61,12 +74,11 @@ void add(const char* str){
 		}
 
 		int len= strlen(nstr);
-		Finger& c = g_all.total[g_all.cnt];
-		memset( c.str, 0, sizeof(c.str));
-		strcpy( c.str, nstr );
-		c.next = g_all.by_cnt[len];
-		g_all.by_cnt[len] = &c;
-		++ g_all.cnt;
+		Lst& head = g_cnt[len];
+		Finger* item = g_all.get();
+		strcpy(item->str, nstr);
+		item->next = head.next;
+		head.next = item;
 }
 
 void decode(const char* str){
@@ -101,6 +113,7 @@ int count(){
 
 		int cnt;
 		string f;
+		g_cnt.clear();
 		cin >> cnt;
 		for(int i=0; i<cnt; ++i){
 				cin >> f;
@@ -114,7 +127,10 @@ int count(){
 		char* pos;
 		found.reset();
 		for(int i=1100; i>0; --i){
-				Finger* tmp = g_all.by_cnt[i];
+
+				Lst& head = g_cnt[i];
+				Finger *tmp = head.next;
+
 				while(tmp != NULL ){
 						int len = strlen( tmp->str );
 						bool fd = false;
@@ -148,12 +164,17 @@ int main(int argc, char* argv[]){
 		
 		int cnt = 0;
 		cin >> cnt;
+		list<int> out;
 		for(int i = 0; i<cnt; ++i){
 				int ret;
 				ret = count();
-				cout << ret << "\n";
 				g_all.reset();
+				out.push_back(ret);
 		}
 
+		for(list<int>::iterator iter = out.begin();
+			iter != out.end(); ++iter){
+				cout << *iter << "\n";
+		}
 		return 0;
 }

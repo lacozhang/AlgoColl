@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstdlib>
 
 using namespace std;
 
@@ -20,31 +21,72 @@ node* clist(int dat[], int n){
 		ret->next = clist(dat+1, n-1);
 }
 
-void lsort(node* r){
-		if( !r || r->next == NULL )
-				return r;
-		int cnt=0;
-		for(node* i=r; i; i=i->next){
+int Length(node* head){
+		int cnt = 0;
+		while( head ){
 				cnt++;
+				head = head->next;
 		}
-		cnt /= 2;
-		node* next = NULL, *prev=NULL;
-		for(node* next=r, j=0; j<cnt; ++j, next=next->next){
-				prev = next;
+		return cnt;
+}
+
+void Push(node **headref, int newData){
+		node *n = new node;
+		if( !n ){
+				abort();
+		}
+		n->val = newData;
+		n->next = *headref;
+		*headref = n;
+}
+
+void outlist(node* head){
+
+		while(head){
+				cout << head->val << "\t";
+				head = head->next;
+		}
+		cout << "\nEnd\n";
+}
+
+void DeleteList(node **head){
+		node *tmp = NULL;
+		while( *head ){
+				tmp = *head;
+				*head = (*head)->next;
+				delete tmp;
 		}
 }
 
+void FrontBackSplit(node* source, node** frontRef, node** backRef){
+
+		node* slow = source, *fast = source->next;
+		while( fast && fast->next ){
+				slow = slow->next;
+				fast = fast->next->next;
+		}
+		*frontRef = source;
+		*backRef = slow->next;
+		slow->next = NULL;
+}
+
+
 int main(int argc, char* argv[]){
 		
-		int dat[10];
-		for(int i=0; i<10; ++i){
-				cin >> dat[i];
+		node *head = NULL;
+		for(int i=1; i<=19; ++i){
+				Push(&head, i);
 		}
-		node* root = clist(dat, 10);
-/*		for(node* i=root; i; i=i->next){
-				cout << i->val << "\n";
-		}
-*/
-		lsort(root);
+		node *f=NULL, *b=NULL;
+		FrontBackSplit(head, &f, &b);
+		cout << Length(f) << "\n";
+		cout << Length(b) << "\n";
+		outlist(f);
+		outlist(b);
+		DeleteList(&f);
+		DeleteList(&b);
+		outlist(f);
+		outlist(b);
+
 		return 0;
 }
