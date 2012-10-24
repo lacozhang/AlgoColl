@@ -3,17 +3,16 @@
 using namespace std;
 
 bool find(int *a, int s, int e, int val){
+		
 		int l=s, h=e, m=0;
 		while( l <= h ){
-				m = l + (h-l)/2;
-				if( a[m] == val )
-						break;
 
-				if( (a[m] > a[l] || a[m] < a[h]) && a[m] < val ){
-						l = m + 1;
-				} else {
-						h = m - 1;
+				m = l + (h-l)/2;
+				if( a[m] == val ){
+						break;
 				}
+
+				if( ((a[m] > a[l]) || (a[m] < a[h] && a[h] > val)) && a[m] < val ){
 //				if( (a[m] > a[l] || a[m] < a[h]) && a[m] > val ){
 //						h = m - 1; 
 //				} else {

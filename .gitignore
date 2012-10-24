@@ -2,3 +2,4 @@
 *.stackdump
 test.*
 *.gch
+*.out
