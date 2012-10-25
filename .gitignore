@@ -3,3 +3,4 @@
 test.*
 *.gch
 *.out
+*.pyc
